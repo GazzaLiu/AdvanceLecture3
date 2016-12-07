@@ -70,7 +70,24 @@ public class Controller : MonoBehaviour {
             ps.Stop();
         }
         if (Input.GetKeyDown(KeyCode.X))
+        {
             ps.Play();
+
+            RaycastHit[] hits = Physics.RaycastAll(transform.position, transform.forward);
+            foreach (RaycastHit hit in hits) {
+                GameObject other = hit.collider.gameObject;
+                if (other.CompareTag("Explode")) {
+                    Vector3 dir = other.transform.position - transform.position;
+                    dir.y += 6f;
+                    float dis = dir.magnitude;
+                    dir.Normalize();
+                    other.GetComponent<Rigidbody>().AddForce(50f*dir, ForceMode.VelocityChange);
+                    StartCoroutine(other.GetComponent<ExplodeCube>().explode());
+                }
+            }
+
+
+        }
 
         if (Input.GetKeyDown(KeyCode.C))
             animator.SetBool("isAttack", true);
@@ -78,7 +95,26 @@ public class Controller : MonoBehaviour {
             animator.SetBool("isAttack", false);
 
         if (Input.GetKeyDown(KeyCode.V))
+        {
             animator.SetBool("isBomb", true);
+            Collider[] colliders = Physics.OverlapSphere(transform.position, 6f);
+            foreach (Collider collider in colliders)
+            {
+                GameObject other = collider.gameObject;
+                if (other.CompareTag("Explode"))
+                {
+                    Vector3 dir = other.transform.position - transform.position;
+                    dir.y += 3f;
+                    float dis = dir.magnitude;
+                    dis = Random.RandomRange(dis * 0.9f, dis * 1.1f);
+                    dir.Normalize();
+                    other.GetComponent<Rigidbody>().AddForce(120f * dir/dis, ForceMode.VelocityChange);
+                    StartCoroutine(other.GetComponent<ExplodeCube>().explode());
+                }
+            }
+        
+        
+        }
         else
             animator.SetBool("isBomb", false);
     }
