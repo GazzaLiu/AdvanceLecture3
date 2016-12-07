@@ -8,6 +8,7 @@ public class Controller : MonoBehaviour {
     public GameObject flame;
     ParticleSystem ps;
 
+    bool isMove = true;
     float speed = 0.1f;
     float horizontalSpeed = 0;
     float verticalSpeed = 0;
@@ -22,19 +23,40 @@ public class Controller : MonoBehaviour {
 
 
     void Update () {
-        transform.eulerAngles = new Vector3(0, 0, 0);
+        AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(1);
+
+        if(state.IsName("Arm Layer.Wave") || state.IsName("Arm Layer.Attack") || state.IsName("Arm Layer.Bomb"))
+            isMove = false;
+        else
+            isMove = true;
 
         horizontalSpeed = Input.GetAxis("Horizontal") * speed;
         verticalSpeed = Input.GetAxis("Vertical") * speed;
 
-        cc.Move(new Vector3(horizontalSpeed, 0, verticalSpeed));
-
-        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow))
+        if (Input.GetKey(KeyCode.UpArrow) && isMove) {
+            transform.eulerAngles = new Vector3(0, 0, 0);
+            cc.Move(new Vector3(horizontalSpeed, 0, verticalSpeed));
             animator.SetBool("isRun", true);
+        }
+        else if (Input.GetKey(KeyCode.DownArrow) && isMove) {
+            transform.eulerAngles = new Vector3(0, 180, 0);
+            cc.Move(new Vector3(horizontalSpeed, 0, verticalSpeed));
+            animator.SetBool("isRun", true);
+        }
+        else if (Input.GetKey(KeyCode.LeftArrow) && isMove) {
+            transform.eulerAngles = new Vector3(0, 270, 0);
+            cc.Move(new Vector3(horizontalSpeed, 0, verticalSpeed));
+            animator.SetBool("isRun", true);
+        }
+        else if (Input.GetKey(KeyCode.RightArrow) && isMove) {
+            transform.eulerAngles = new Vector3(0, 90, 0);
+            cc.Move(new Vector3(horizontalSpeed, 0, verticalSpeed));
+            animator.SetBool("isRun", true);
+        }
         else if (Mathf.Abs(Input.GetAxis("Horizontal")) != 1 || Mathf.Abs(Input.GetAxis("Vertical")) != 1)
             animator.SetBool("isRun", false);
 
-        animator.SetFloat("direction", Input.GetAxis("Horizontal"));
+        //animator.SetFloat("direction", Input.GetAxis("Horizontal"));
 
         if (Input.GetKeyDown(KeyCode.Z))
             animator.SetBool("isJump", true);
