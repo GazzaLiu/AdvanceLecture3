@@ -3,16 +3,16 @@ using System.Collections;
 
 public class Controller : MonoBehaviour {
 
+    public GameObject flame;
+
     Animator animator;
     CharacterController cc;
-    public GameObject flame;
     ParticleSystem ps;
 
     bool isMove = true;
     float speed = 0.1f;
     float horizontalSpeed = 0;
     float verticalSpeed = 0;
-    Vector3 moveDirection = Vector3.zero;
 
     void Start () {
         animator = this.GetComponent<Animator>();
@@ -20,7 +20,6 @@ public class Controller : MonoBehaviour {
         ps = flame.GetComponent<ParticleSystem>();
         animator.SetLayerWeight(1, 1);
     }
-
 
     void Update () {
         AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(1);
@@ -71,6 +70,9 @@ public class Controller : MonoBehaviour {
         }
         if (Input.GetKeyDown(KeyCode.X))
         {
+
+            flame.transform.position = this.transform.position + new Vector3(0, 1.221f, 0);
+            flame.transform.rotation = this.transform.rotation;
             ps.Play();
 
             RaycastHit[] hits = Physics.RaycastAll(transform.position, transform.forward);
@@ -106,14 +108,14 @@ public class Controller : MonoBehaviour {
                     Vector3 dir = other.transform.position - transform.position;
                     dir.y += 3f;
                     float dis = dir.magnitude;
-                    dis = Random.RandomRange(dis * 0.9f, dis * 1.1f);
+                    dis = Random.Range(dis * 0.9f, dis * 1.1f);
                     dir.Normalize();
                     other.GetComponent<Rigidbody>().AddForce(120f * dir/dis, ForceMode.VelocityChange);
                     StartCoroutine(other.GetComponent<ExplodeCube>().explode());
                 }
             }
-        
-        
+
+
         }
         else
             animator.SetBool("isBomb", false);
