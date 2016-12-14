@@ -33,6 +33,7 @@ public class Controller : MonoBehaviour {
         verticalSpeed = Input.GetAxis("Vertical") * speed;
 
         if (Input.GetKey(KeyCode.UpArrow) && isMove) {
+
             transform.eulerAngles = new Vector3(0, 0, 0);
             cc.Move(new Vector3(horizontalSpeed, 0, verticalSpeed));
             animator.SetBool("isRun", true);
@@ -76,16 +77,15 @@ public class Controller : MonoBehaviour {
             ps.Play();
 
             RaycastHit[] hits = Physics.RaycastAll(transform.position, transform.forward);
-            foreach (RaycastHit hit in hits) {
+            foreach (RaycastHit hit in hits)
+            {
                 GameObject other = hit.collider.gameObject;
-                if (other.CompareTag("Explode")) {
-                    Vector3 dir = other.transform.position - transform.position;
-                    dir.y += 6f;
-                    float dis = dir.magnitude;
-                    dir.Normalize();
-                    other.GetComponent<Rigidbody>().AddForce(50f*dir, ForceMode.VelocityChange);
-                    StartCoroutine(other.GetComponent<ExplodeCube>().explode());
-                }
+                Vector3 dir = other.transform.position - transform.position;
+                dir.y += 1f;
+                float dis = dir.magnitude;
+                dir.Normalize();
+                other.GetComponent<Rigidbody>().AddForce(50f * dir, ForceMode.VelocityChange);
+                StartCoroutine(other.GetComponent<ExplodeCube>().explode());
             }
 
 
@@ -99,14 +99,14 @@ public class Controller : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.V))
         {
             animator.SetBool("isBomb", true);
-            Collider[] colliders = Physics.OverlapSphere(transform.position, 6f);
+            Collider[] colliders = Physics.OverlapSphere(transform.position, 6f, LayerMask.GetMask("Enemy"));
             foreach (Collider collider in colliders)
             {
                 GameObject other = collider.gameObject;
                 if (other.CompareTag("Explode"))
                 {
                     Vector3 dir = other.transform.position - transform.position;
-                    dir.y += 3f;
+                    dir.y += 1f;
                     float dis = dir.magnitude;
                     dis = Random.Range(dis * 0.9f, dis * 1.1f);
                     dir.Normalize();
